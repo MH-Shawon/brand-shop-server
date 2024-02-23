@@ -1,19 +1,18 @@
 const express = require("express");
-const app = express();
-const cors = require('cors');
-const port =process.env.PORT || 5000;
-
-// lkh8hlecDzhziwJp 
-
-
-app.use(cors())
-app.use(express())
-
-
-
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const app = express();
+const cors = require("cors");
+const port = process.env.PORT || 5000;
+
+// lkh8hlecDzhziwJp
+
+app.use(cors());
+app.use(express.json());
+
+
+
 const uri =
-  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.6inx0k6.mongodb.net/?retryWrites=true&w=majority`;
+  "mongodb+srv://mohsinshawon18:LamBiwauPK7AgRc1@cluster0.6inx0k6.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -28,21 +27,34 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    const productCollection = client.db("productDB").collection('products');
+    const productCollection = client.db("productDB").collection("products");
+    const bookingCollection = client.db("productDB").collection("bookings");
 
-app.get("/products", async(req,res)=>{
-  const result= await productCollection.find().toArray();
-  res.send(result);
-})
-app.get("/details/:id", async (req, res) => {
-  const id = req.params.id;
-  const query = {
-    _id: new ObjectId(id),
-  };
-  const result = await productCollection.findOne(query);
-  console.log(result);
-  res.send(result);
-});
+    app.get("/products", async (req, res) => {
+      const result = await productCollection.find().toArray();
+      res.send(result);
+    });
+
+
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+console.log(id)
+      const query = {
+        _id: new ObjectId(id),
+      };
+      console.log('query',query)
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
+
+
+
+    app.post('/bookings', async(req,res)=>{
+      const book = req.body;
+      const result = await bookingCollection.insertOne(book);
+      res.send(result);
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -54,7 +66,6 @@ app.get("/details/:id", async (req, res) => {
   }
 }
 run().catch(console.dir);
-
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
