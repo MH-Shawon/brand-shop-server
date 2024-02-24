@@ -1,16 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "./index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/",
-      "methods": ["GET", "POST", "PATCH", "DELETE", "OPTIONS"]
-    }
-  ]
+  "builds": [{ "src": "your-build-folder/**", "use": "@vercel/static-build" }],
+  "routes": [{ "src": "/(.*)", "dest": "/your-build-folder/$1" }]
 }
