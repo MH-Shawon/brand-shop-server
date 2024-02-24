@@ -39,7 +39,6 @@ async function run() {
 
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
-
       const query = {
         _id: new ObjectId(id),
       };
@@ -56,10 +55,45 @@ async function run() {
     })
     app.get("/bookings", async(req,res)=>{
       const result = await bookingCollection.find().toArray();
-      console.log(result)
+      
       res.send(result);
 
     })
+    app.delete('/bookings/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id)
+      }
+      const result = await bookingCollection.deleteOne(query);
+      console.log(result)
+      res.send(result);
+    })
+    app.get("/bookings/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await bookingCollection.findOne(query);
+      res.send(result);
+    });
+
+      app.put('/bookings/:id', async(req,res)=>{
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const options = {upsert:true};
+        const updatedBooking = req.body;
+        const booking ={
+          $set:{
+            name:updatedBooking.name,
+            brand:updatedBooking.brand,
+            details:updatedBooking.details,
+            photo:updatedBooking.photo,
+  
+          }
+        }
+        const result = await productCollection.updateOne(filter,booking, options );
+        res.send(result)
+      })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
