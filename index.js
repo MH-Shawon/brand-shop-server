@@ -75,7 +75,7 @@ async function run() {
       };
       const result = await bookingCollection.findOne(query);
       res.send(result);
-    });
+    })
 
       app.put('/bookings/:id', async(req,res)=>{
         const id = req.params.id;
